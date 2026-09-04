@@ -4,8 +4,8 @@ import { users } from '@/db/schema';
 import { requireApiAdmin } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
-export async function PATCH(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {

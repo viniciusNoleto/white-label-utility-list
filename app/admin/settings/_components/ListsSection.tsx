@@ -146,6 +146,7 @@ function InternalListDetail({
           <FormButton
             variant="subtle"
             color="red"
+            leftIcon="lucide:trash-2"
             onClick={() => onDeleteList(list)}
           >
             {t('admin.settings.lists.actions.delete')}
@@ -197,8 +198,7 @@ function InternalListDetail({
                       <FormButton
                         icon="lucide:pencil"
                         tooltip={t('common.actions.edit')}
-                        variant="subtle"
-                        color="gray"
+                        variant="outline"
                         onClick={() => onEditItem(list, listItem)}
                       />
 

@@ -1,4 +1,4 @@
-export default {
+const enUS = {
   language: {
     label: 'Language',
     'pt-br': 'Português (Brasil)',
@@ -18,6 +18,7 @@ export default {
     table: {
       emptyDefault: 'No data found',
       actionsColumn: 'Actions',
+      perPage: 'Rows per page',
     },
     notifications: {
       errorTitle: 'Error',
@@ -328,7 +329,7 @@ export default {
         },
         parts: {
           label: 'Parts',
-          actions: { add: '+ Part', edit: 'Edit parts', save: 'Save object' },
+          actions: { add: 'Part', edit: 'Edit parts', save: 'Save object' },
           empty: 'Add the first part — e.g. "Name".',
           count_one: '{{count}} part',
           count_other: '{{count}} parts',
@@ -353,7 +354,7 @@ export default {
       subtitle: 'Manage the records of the main table',
     },
     actions: { new: 'New record' },
-    filters: { column: 'Select column', search: 'Search...' },
+    filters: { column: 'Select column', search: 'Search...', add: 'Add filter', remove: 'Remove filter' },
     table: { empty: 'No records found.' },
     modals: {
       create: 'New record',
@@ -377,3 +378,5 @@ export default {
     },
   },
 }
+
+export default enUS

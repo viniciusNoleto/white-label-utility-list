@@ -6,8 +6,8 @@ import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
 const VALID_TYPES = ['text', 'long_text', 'date', 'select', 'object', 'number'];
 
-export async function GET() {
-  const { response } = await requireApiAdmin();
+export async function GET(request: Request) {
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {
@@ -20,7 +20,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { response } = await requireApiAdmin();
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {

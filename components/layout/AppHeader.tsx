@@ -1,12 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
 import { useMantineColorScheme } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { FormButton } from '@/src/components/form/Button';
 import { LanguageSwitcher } from '@/src/components/utils/LanguageSwitcher';
-import { logoutUserService } from '@/src/resources/auth/services/logoutUser';
+import { useLogoutLogicData } from '@/src/resources/auth/logics/Logout';
 import type { IAuthUser } from '@/src/resources/auth/models/AuthUser';
 
 export function AppHeader({ user, onMenuClick }: { user: IAuthUser; onMenuClick: () => void }) {
@@ -14,8 +13,9 @@ export function AppHeader({ user, onMenuClick }: { user: IAuthUser; onMenuClick:
   const router = useRouter();
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
-  const logoutMutation = useMutation({
-    mutationFn: () => logoutUserService(),
+  const {
+    logoutMutation: { mutate: logout, isPending: logoutIsPending },
+  } = useLogoutLogicData({
     onSuccess: () => {
       router.push('/auth/login');
       router.refresh();
@@ -54,8 +54,8 @@ export function AppHeader({ user, onMenuClick }: { user: IAuthUser; onMenuClick:
           variant="default"
           color="gray"
           leftIcon="lucide:log-out"
-          loading={logoutMutation.isPending}
-          onClick={() => logoutMutation.mutate()}
+          loading={logoutIsPending}
+          onClick={() => logout()}
           className="rounded-lg! border-gray-200! dark:border-gray-800!"
         >
           {t('header.logout')}

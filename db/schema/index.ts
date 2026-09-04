@@ -1,5 +1,6 @@
 export * from './users';
-export * from './sessions';
+export * from './access-tokens';
+export * from './refresh-tokens';
 export * from './internal-lists';
 export * from './internal-list-items';
 export * from './objects';

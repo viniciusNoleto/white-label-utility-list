@@ -32,6 +32,27 @@ export function useNotFirstEffect(effect: () => void, deps: DependencyList) {
   }, deps);
 }
 
+export function useQueryParamState<T extends string>(key: string, defaultValue: T) {
+  const [value, setValue] = useState<T>(() => {
+    if (typeof window === 'undefined') return defaultValue;
+
+    const params = new URLSearchParams(window.location.search);
+
+    return (params.get(key) as T) || defaultValue;
+  });
+
+  function setQueryParamValue(newValue: T) {
+    setValue(newValue);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set(key, newValue);
+
+    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+  }
+
+  return [value, setQueryParamValue] as const;
+}
+
 export function useStoppableEffect(
   effect: () => void,
   deps: unknown[]

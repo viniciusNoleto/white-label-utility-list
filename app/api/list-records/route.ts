@@ -1,32 +1,49 @@
-import { desc, count, sql, eq } from 'drizzle-orm';
+import { desc, count, sql, and, inArray } from 'drizzle-orm';
 import { db } from '@/libs/db';
 import { listRecords, listFields, listColumns, objectFields } from '@/db/schema';
 import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
 export async function GET(request: Request) {
-  const { response } = await requireApiUser();
+  const { response } = await requireApiUser(request);
   if (response) return response;
 
   try {
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, Number(searchParams.get('page')) || 1);
     const perPage = Math.max(1, Number(searchParams.get('per_page')) || 15);
-    const columnId = Number(searchParams.get('column_id')) || undefined;
-    const value = searchParams.get('value')?.trim();
+
+    let filters: { column_id: number; value: string }[] = [];
+
+    try {
+      const parsed = JSON.parse(searchParams.get('filters') ?? '[]');
+      if (Array.isArray(parsed)) {
+        filters = parsed.filter((filter): filter is { column_id: number; value: string } => !!filter?.column_id && typeof filter?.value === 'string' && filter.value.trim() !== '');
+      }
+    } catch {
+      filters = [];
+    }
 
     let searchCondition = undefined;
 
-    if (columnId && value) {
-      const [column] = await db.select().from(listColumns).where(eq(listColumns.id, columnId));
+    if (filters.length > 0) {
+      const columnRows = await db.select().from(listColumns).where(inArray(listColumns.id, filters.map(filter => filter.column_id)));
+      const columnsById = Object.fromEntries(columnRows.map(column => [column.id, column]));
 
-      if (column) {
-        const likeValue = `%${value}%`;
+      const conditions = filters
+        .map((filter) => {
+          const column = columnsById[filter.column_id];
+          if (!column) return null;
 
-        searchCondition = column.sub_path
-          ? sql`${listRecords.values} -> ${column.field_key} ->> ${column.sub_path} ILIKE ${likeValue}`
-          : sql`${listRecords.values} ->> ${column.field_key} ILIKE ${likeValue}`;
-      }
+          const likeValue = `%${filter.value.trim()}%`;
+
+          return column.sub_path
+            ? sql`${listRecords.values} -> ${column.field_key} ->> ${column.sub_path} ILIKE ${likeValue}`
+            : sql`${listRecords.values} ->> ${column.field_key} ILIKE ${likeValue}`;
+        })
+        .filter(condition => condition !== null);
+
+      if (conditions.length > 0) searchCondition = and(...conditions);
     }
 
     const [{ value: total }] = await db
@@ -61,7 +78,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { user, response } = await requireApiUser();
+  const { user, response } = await requireApiUser(request);
   if (response) return response;
 
   try {

@@ -5,7 +5,7 @@ import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiUser();
+  const { response } = await requireApiUser(request);
   if (response) return response;
 
   try {
@@ -30,8 +30,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiUser();
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { response } = await requireApiUser(request);
   if (response) return response;
 
   try {

@@ -4,8 +4,8 @@ import { objects, listFields } from '@/db/schema';
 import { requireApiAdmin } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {

@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/libs/db';
 import { users } from '@/db/schema';
 import { verifyPassword } from '@/libs/auth/password';
-import { createSession } from '@/libs/auth/session';
+import { createSession } from '@/libs/auth/refreshToken';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
 const INVALID_CREDENTIALS = msg(
@@ -35,10 +35,14 @@ export async function POST(request: Request) {
       return jsonError(PENDING_APPROVAL, 403);
     }
 
-    await createSession(user.id, user.role);
+    const session = await createSession(user.id);
 
     return jsonOk(
-      { id: user.id, name: user.name, email: user.email, role: user.role, status: user.status },
+      {
+        user: { id: user.id, name: user.name, email: user.email, role: user.role, status: user.status },
+        access_token: session.accessToken,
+        refresh_token: session.refreshToken,
+      },
       msg('Login realizado com sucesso.', 'Inicio de sesión exitoso.', 'Logged in successfully.'),
     );
   } catch (error) {

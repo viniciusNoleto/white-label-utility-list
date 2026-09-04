@@ -1,11 +1,13 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/libs/db';
-import { users, sessions } from '@/db/schema';
+import { users } from '@/db/schema';
 import { requireApiAdmin } from '@/libs/auth/dal';
+import { revokeAllAccessTokensForUser } from '@/libs/auth/accessToken';
+import { revokeAllRefreshTokensForUser } from '@/libs/auth/refreshToken';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
-export async function PATCH(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {
@@ -20,7 +22,8 @@ export async function PATCH(_request: Request, { params }: { params: Promise<{ i
 
     if (!updated) return jsonError(MESSAGES.notFound, 404);
 
-    await db.delete(sessions).where(eq(sessions.user_id, userId));
+    await revokeAllAccessTokensForUser(userId);
+    await revokeAllRefreshTokensForUser(userId);
 
     return jsonOk(updated, msg('Usuário rejeitado.', 'Usuario rechazado.', 'User rejected.'));
   } catch (error) {

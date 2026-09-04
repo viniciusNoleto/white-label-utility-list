@@ -29,7 +29,7 @@ export function DeleteInternalListItemButton({ listId, itemId, onDeleted }: { li
     <FormButton
       icon="lucide:trash-2"
       tooltip={t('common.actions.delete')}
-      variant="subtle"
+      variant="outline"
       color="red"
       loading={deleteMutation.isPending}
       onClick={() => deleteMutation.mutate()}

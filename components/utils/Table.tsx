@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react';
 import { UtilsFor } from '@/src/components/utils/For';
 import { FormButton, type FormButtonProps } from '../form/Button';
 import { UtilsIf } from './If';
-import { LoadingOverlay, Pagination } from '@mantine/core';
+import { LoadingOverlay, Pagination, Select } from '@mantine/core';
 import {
   DndContext,
   KeyboardSensor,
@@ -36,19 +36,26 @@ export type TableProps<T extends object, U extends Record<string, string>> = {
   renderCells?: TableRenderCells<T, U>;
   onReorder?: (ctx: { item: T; index: number; newIndex: number }) => void;
   showRowNumber?: boolean;
+  paginationPosition?: 'top' | 'bottom';
 } & (
   {
     lastPage: number;
     page: number;
     perPage: number;
     setPage: (page: number) => void;
+    perPageOptions?: number[];
+    setPerPage?: (perPage: number) => void;
   } | {
     lastPage?: never;
     page?: never;
     perPage?: never;
     setPage?: never;
+    perPageOptions?: never;
+    setPerPage?: never;
   }
 );
+
+const DEFAULT_PER_PAGE_OPTIONS = [10, 15, 25, 50, 100];
 
 const ROW_NUMBER_FIELD = '__row_number';
 
@@ -84,11 +91,14 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
   perPage,
   alias,
   setPage,
+  perPageOptions = DEFAULT_PER_PAGE_OPTIONS,
+  setPerPage,
   rowKey,
   actions,
   renderCells,
   onReorder,
   showRowNumber = false,
+  paginationPosition = 'bottom',
 }: TableProps<T, U>) {
   const { t } = useTranslation();
 
@@ -139,7 +149,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
         eachKey={({item: column}) => column.field}
       >
         {({item: column}) => (
-          <td className={`px-6 py-4 text-sm whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-[1] bg-white dark:bg-neutral-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/40' : ''}`}>
+          <td className={`px-6 py-4 text-sm whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-1 bg-white dark:bg-neutral-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/40' : ''}`}>
             {
               renderCells && renderCells[column.field] ?
                 renderCells[column.field]!({
@@ -162,8 +172,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
               {({item: action}) => (
                 <FormButton
                   {...action}
-                  size="compact-xs"
-                  variant="transparent"
+                  variant="outline"
                   aria-label={action.label}
                   label={action.icon ? undefined : action.label}
                   tooltip={action.label}
@@ -175,6 +184,45 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
         </td>
       ) : null}
     </>
+  );
+
+  const paginationSection = (
+    <UtilsIf condition={!!(setPerPage || (lastPage && lastPage > 1))}>
+      {() => (
+        <div className={`flex items-center justify-between gap-4 ${paginationPosition === 'top' ? 'pb-4 border-b border-gray-50 dark:border-gray-800 mb-2' : 'pt-4 border-t border-gray-50 dark:border-gray-800 mt-2'}`}>
+          <UtilsIf condition={!!setPerPage}>
+            {() => (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                  {t('common.table.perPage')}
+                </span>
+
+                <Select
+                  data={perPageOptions.map(String)}
+                  value={String(perPage)}
+                  onChange={value => value && setPerPage?.(Number(value))}
+                  allowDeselect={false}
+                  comboboxProps={{ width: 'max-content', position: 'bottom-start' }}
+                  w={80}
+                  size="xs"
+                />
+              </div>
+            )}
+          </UtilsIf>
+
+          <UtilsIf condition={!!(lastPage && lastPage > 1)}>
+            {() => (
+              <Pagination
+                total={lastPage ?? 0}
+                value={page ?? 1}
+                onChange={page => setPage?.(page)}
+                color="primary"
+              />
+            )}
+          </UtilsIf>
+        </div>
+      )}
+    </UtilsIf>
   );
 
   return (
@@ -196,6 +244,10 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
           overlayProps={{ blur: 2 }}
           loaderProps={{ color: 'primary', type: 'bars' }}
         />
+
+        <UtilsIf condition={paginationPosition === 'top'}>
+          {() => paginationSection}
+        </UtilsIf>
 
         <section className="overflow-x-auto">
           <table className="w-max min-w-full text-left border-separate border-spacing-0">
@@ -294,17 +346,8 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
           </table>
         </section>
 
-        <UtilsIf condition={!!(lastPage && lastPage > 1)}>
-          {() => (
-            <div className="flex justify-center pt-4 border-t border-gray-50 dark:border-gray-800 mt-2">
-              <Pagination
-                total={lastPage ?? 0}
-                value={page ?? 1}
-                onChange={page => setPage?.(page)}
-                color="primary"
-              />
-            </div>
-          )}
+        <UtilsIf condition={paginationPosition === 'bottom'}>
+          {() => paginationSection}
         </UtilsIf>
       </section>
     </section>

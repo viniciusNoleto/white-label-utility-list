@@ -1,60 +1,36 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Badge } from '@mantine/core';
+import { lazy } from 'react';
+import { Icon } from '@iconify/react';
 import { useTranslation } from 'react-i18next';
-import { UtilsCard } from '@/src/components/utils/Card';
-import { UtilsTable } from '@/src/components/utils/Table';
 import { UtilsFor } from '@/src/components/utils/For';
-import { getUsersService, GET_USERS_KEY } from '@/src/resources/user/services/getUsers';
-import { useApproveUserLogicData, ApproveUserLogicButton } from '@/src/resources/user/logics/ApproveUser';
-import { useRejectUserLogicData, RejectUserLogicButton } from '@/src/resources/user/logics/RejectUser';
+import { UtilsLoader } from '@/src/components/utils/Loader';
+import { FormSegmentedControl } from '@/src/components/form/SegmentedControl';
+import { useQueryParamState } from '@/src/utils/hooks';
 import type { IUser } from '@/src/resources/user/models/User';
 
-const STATUS_TABS: { value: IUser['status']; labelKey: string }[] = [
+const UsersStatusSection = lazy(() => import('./_components/UsersStatusSection').then(m => ({ default: m.UsersStatusSection })));
+
+const SECTION_LOADER_FALLBACK = (
+  <div className="flex items-center justify-center p-12">
+    <Icon
+      icon="svg-spinners:bars-scale-fade"
+      className="w-10 h-10 text-primary-600 dark:text-primary-400"
+    />
+  </div>
+);
+
+type TabValue = IUser['status'];
+
+const TABS: { value: TabValue; labelKey: string }[] = [
   { value: 'pending', labelKey: 'admin.users.tabs.pending' },
   { value: 'approved', labelKey: 'admin.users.tabs.approved' },
   { value: 'rejected', labelKey: 'admin.users.tabs.rejected' },
 ];
 
-const STATUS_COLORS: Record<IUser['status'], string> = {
-  pending: 'yellow',
-  approved: 'green',
-  rejected: 'red',
-};
-
-function UserRowActions({ user, onDone }: { user: IUser; onDone: () => void }) {
-  const approveUserLogicData = useApproveUserLogicData({ userId: user.id, onSuccess: onDone });
-  const rejectUserLogicData = useRejectUserLogicData({ userId: user.id, onSuccess: onDone });
-
-  return (
-    <div className="flex items-center justify-center gap-1">
-      {user.status !== 'approved' ? (
-        <ApproveUserLogicButton logicData={approveUserLogicData} />
-      ) : null}
-
-      {user.status !== 'rejected' ? (
-        <RejectUserLogicButton logicData={rejectUserLogicData} />
-      ) : null}
-    </div>
-  );
-}
-
 export default function AdminUsersPage() {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<IUser['status']>('pending');
-
-  const {
-    data: usersData,
-    isFetching: usersIsFetching,
-    refetch: usersRefetch,
-  } = useQuery({
-    queryKey: [...GET_USERS_KEY, status],
-    queryFn: ({ signal }) => getUsersService({ signal, query: { status } }),
-  });
-
-  const users = useMemo(() => usersData?.data ?? [], [usersData]);
+  const [tab, setTab] = useQueryParamState<TabValue>('tab', 'pending');
 
   return (
     <main className="flex flex-col flex-1 gap-6 p-6">
@@ -68,55 +44,29 @@ export default function AdminUsersPage() {
         </span>
       </div>
 
-      <div className="flex items-center gap-1 p-1 bg-gray-100 dark:bg-neutral-800 rounded-full w-max flex-wrap">
-        <UtilsFor each={STATUS_TABS}>
-          {({ item: tab }) => (
-            <button
-              type="button"
-              onClick={() => setStatus(tab.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${status === tab.value ? 'bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-100 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
-            >
-              {t(tab.labelKey)}
-            </button>
-          )}
-        </UtilsFor>
-      </div>
+      <FormSegmentedControl
+        value={tab}
+        onChange={value => setTab(value as TabValue)}
+        data={TABS.map(item => ({ value: item.value, label: t(item.labelKey) }))}
+        className="self-start"
+      />
 
-      <UtilsCard>
-        <UtilsTable
-          rows={users}
-          rowKey={({ item }) => item.id}
-          loading={usersIsFetching}
-          emptyText={t('admin.users.table.empty')}
-          columns={{
-            name: t('admin.users.table.columns.name'),
-            email: t('admin.users.table.columns.email'),
-            status: t('admin.users.table.columns.status'),
-            actions: t('common.table.actionsColumn'),
-          }}
-          renderCells={{
-            email: ({ item }) => (
-              <span className="font-mono text-[13px]">
-                {item.email}
-              </span>
-            ),
-            status: ({ item }) => (
-              <Badge
-                color={STATUS_COLORS[item.status]}
-                radius="xl"
-              >
-                {t(`admin.users.status.${item.status}`)}
-              </Badge>
-            ),
-            actions: ({ item }) => (
-              <UserRowActions
-                user={item}
-                onDone={() => usersRefetch()}
-              />
-            ),
-          }}
-        />
-      </UtilsCard>
+      <UtilsFor
+        each={[
+          { key: 'pending' as TabValue, content: () => <UsersStatusSection status="pending" /> },
+          { key: 'approved' as TabValue, content: () => <UsersStatusSection status="approved" /> },
+          { key: 'rejected' as TabValue, content: () => <UsersStatusSection status="rejected" /> },
+        ]}
+      >
+        {({ item }) => (
+          <UtilsLoader
+            show={item.key === tab}
+            fallback={SECTION_LOADER_FALLBACK}
+          >
+            {item.content}
+          </UtilsLoader>
+        )}
+      </UtilsFor>
     </main>
   );
 }

@@ -4,8 +4,8 @@ import { listFields, listColumns, internalLists, internalListItems, objects, obj
 import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 
-export async function GET() {
-  const { response } = await requireApiUser();
+export async function GET(request: Request) {
+  const { response } = await requireApiUser(request);
   if (response) return response;
 
   try {

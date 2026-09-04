@@ -1,6 +1,6 @@
 import { appClient } from '@/src/utils/app-client';
 import { PayloadBody } from '@/src/shared/types/api';
-import type { IAuthUser } from '../models/AuthUser';
+import type { IAuthSession } from '../models/AuthUser';
 
 export type LoginUserServicePayload = {
   email: string;
@@ -8,5 +8,5 @@ export type LoginUserServicePayload = {
 };
 
 export function loginUserService({ body }: PayloadBody<LoginUserServicePayload>) {
-  return appClient.post<IAuthUser>('/api/auth/login', { body });
+  return appClient.post<IAuthSession>('/api/auth/login', { body });
 }

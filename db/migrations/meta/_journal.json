@@ -22,6 +22,20 @@
       "when": 1788473047854,
       "tag": "0002_parched_praxagora",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788553457871,
+      "tag": "0003_drop_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788553467283,
+      "tag": "0004_add_access_and_refresh_tokens",
+      "breakpoints": true
     }
   ]
 }

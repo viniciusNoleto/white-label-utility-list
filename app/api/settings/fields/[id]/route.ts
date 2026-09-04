@@ -7,7 +7,7 @@ import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 const VALID_TYPES = ['text', 'long_text', 'date', 'select', 'object', 'number'];
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {
@@ -41,8 +41,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {

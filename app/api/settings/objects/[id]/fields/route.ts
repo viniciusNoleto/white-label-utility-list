@@ -7,7 +7,7 @@ import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 const VALID_TYPES = ['text', 'long_text', 'date', 'select', 'number'];
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { response } = await requireApiAdmin();
+  const { response } = await requireApiAdmin(request);
   if (response) return response;
 
   try {

@@ -1,6 +1,6 @@
 import type enUs from './en-us'
 
-export default {
+const ptBR = {
   language: {
     label: 'Idioma',
     'pt-br': 'Português (Brasil)',
@@ -20,6 +20,7 @@ export default {
     table: {
       emptyDefault: 'Nenhum dado encontrado',
       actionsColumn: 'Ações',
+      perPage: 'Registros por página',
     },
     notifications: {
       errorTitle: 'Erro',
@@ -330,7 +331,7 @@ export default {
         },
         parts: {
           label: 'Partes',
-          actions: { add: '+ Parte', edit: 'Editar partes', save: 'Salvar objeto' },
+          actions: { add: 'Parte', edit: 'Editar partes', save: 'Salvar objeto' },
           empty: 'Adicione a primeira parte — por exemplo "Nome".',
           count_one: '{{count}} parte',
           count_other: '{{count}} partes',
@@ -355,7 +356,7 @@ export default {
       subtitle: 'Gerencie os registros da tabela principal',
     },
     actions: { new: 'Novo registro' },
-    filters: { column: 'Selecione a coluna', search: 'Pesquisar...' },
+    filters: { column: 'Selecione a coluna', search: 'Pesquisar...', add: 'Adicionar filtro', remove: 'Remover filtro' },
     table: { empty: 'Nenhum registro encontrado.' },
     modals: {
       create: 'Novo registro',
@@ -379,3 +380,5 @@ export default {
     },
   },
 } satisfies typeof enUs
+
+export default ptBR

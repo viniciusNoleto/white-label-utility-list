@@ -1,6 +1,6 @@
 import type enUs from './en-us'
 
-export default {
+const esMX = {
   language: {
     label: 'Idioma',
     'pt-br': 'Português (Brasil)',
@@ -20,6 +20,7 @@ export default {
     table: {
       emptyDefault: 'No se encontraron datos',
       actionsColumn: 'Acciones',
+      perPage: 'Registros por página',
     },
     notifications: {
       errorTitle: 'Error',
@@ -330,7 +331,7 @@ export default {
         },
         parts: {
           label: 'Partes',
-          actions: { add: '+ Parte', edit: 'Editar partes', save: 'Guardar objeto' },
+          actions: { add: 'Parte', edit: 'Editar partes', save: 'Guardar objeto' },
           empty: 'Agrega la primera parte — por ejemplo "Nombre".',
           count_one: '{{count}} parte',
           count_other: '{{count}} partes',
@@ -355,7 +356,7 @@ export default {
       subtitle: 'Gestiona los registros de la tabla principal',
     },
     actions: { new: 'Nuevo registro' },
-    filters: { column: 'Seleccione la columna', search: 'Buscar...' },
+    filters: { column: 'Seleccione la columna', search: 'Buscar...', add: 'Agregar filtro', remove: 'Quitar filtro' },
     table: { empty: 'No se encontraron registros.' },
     modals: {
       create: 'Nuevo registro',
@@ -379,3 +380,5 @@ export default {
     },
   },
 } satisfies typeof enUs
+
+export default esMX

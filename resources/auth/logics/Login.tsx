@@ -12,6 +12,7 @@ import { FormPassword } from '@/src/components/form/Password';
 import { useValidatedFormState } from '@/src/utils/state';
 import { resolveApiMessage } from '@/src/utils/apiMessage';
 import { loginUserService } from '../services/loginUser';
+import { useAuthStore } from '../stores/useAuthStore';
 import type { IAuthUser } from '../models/AuthUser';
 
 export function useLoginLogicData({ onSuccess }: { onSuccess: (user: IAuthUser) => void }) {
@@ -27,7 +28,10 @@ export function useLoginLogicData({ onSuccess }: { onSuccess: (user: IAuthUser) 
   const loginMutation = useMutation({
     mutationFn: () => loginUserService({ body: loginValidatedFormState.state }),
     onSuccess: (res) => {
-      onSuccess(res.data);
+      useAuthStore.getState().setTokens(res.data);
+      useAuthStore.getState().setUser(res.data.user);
+
+      onSuccess(res.data.user);
     },
     onError: (err: any) => {
       notifications.show({
