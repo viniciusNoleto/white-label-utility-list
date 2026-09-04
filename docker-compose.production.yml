@@ -1,0 +1,42 @@
+services:
+  white-label-utility-list-front:
+    container_name: white-label-utility-list-front
+    user: node
+    restart: unless-stopped
+    tty: true
+    build:
+      dockerfile: ./configs/docker/node/Dockerfile.deploy
+    ports:
+      - 80:3000
+    networks:
+      - white-label-utility-list-network
+    depends_on:
+      white-label-utility-list-postgres:
+        condition: service_healthy
+
+  white-label-utility-list-postgres:
+    container_name: white-label-utility-list-postgres
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - white-label-utility-list-postgres-data:/var/lib/postgresql/data
+    networks:
+      - white-label-utility-list-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  white-label-utility-list-network:
+    name: white-label-utility-list-network
+    driver: bridge
+
+volumes:
+  white-label-utility-list-postgres-data:
+    name: white-label-utility-list-postgres-data

@@ -1,0 +1,12 @@
+import { appClient } from '@/src/utils/app-client';
+import { PayloadBody } from '@/src/shared/types/api';
+
+export type RegisterUserServicePayload = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+export function registerUserService({ body }: PayloadBody<RegisterUserServicePayload>) {
+  return appClient.post<null>('/api/auth/register', { body });
+}
