@@ -37,3 +37,25 @@ html {
 .merge-children > * {
   grid-area: merge;
 }
+
+@keyframes wave-drift {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-wave-drift-slow {
+  animation: wave-drift 26s linear infinite;
+}
+
+.animate-wave-drift-medium {
+  animation: wave-drift 18s linear infinite reverse;
+}
+
+.animate-wave-drift-fast {
+  animation: wave-drift 12s linear infinite;
+}

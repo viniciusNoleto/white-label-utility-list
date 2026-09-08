@@ -355,16 +355,34 @@ const ptBR = {
       title: 'Lista',
       subtitle: 'Gerencie os registros da tabela principal',
     },
-    actions: { new: 'Novo registro' },
+    actions: { new: 'Novo registro', export: 'Exportar' },
     filters: { column: 'Selecione a coluna', search: 'Pesquisar...', add: 'Adicionar filtro', remove: 'Remover filtro' },
     table: { empty: 'Nenhum registro encontrado.' },
     modals: {
       create: 'Novo registro',
       update: 'Editar registro',
       delete: 'Excluir registro',
+      export: 'Exportar registros',
     },
     delete: {
       confirm: 'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+    },
+    export: {
+      filterApplied: 'O filtro atual abaixo será considerado na exportação.',
+      filterIgnored: 'O filtro atual abaixo será ignorado — todos os registros serão exportados.',
+      noFilter: 'Nenhum filtro válido está definido — todos os registros serão exportados.',
+      applyFilter: 'Considerar filtro atual na exportação',
+      estimatedSize: '{{rows}} registro(s) — tamanho estimado: {{size}}',
+      actions: {
+        calculate: 'Ver tamanho estimado',
+        confirm: 'Confirmar e baixar',
+      },
+      notifications: {
+        title: 'Exportação',
+        preparing: 'Gerando o arquivo da planilha...',
+        success: 'Download de "{{filename}}" concluído.',
+        error: 'Não foi possível gerar o arquivo de exportação.',
+      },
     },
     form: {
       validation: {

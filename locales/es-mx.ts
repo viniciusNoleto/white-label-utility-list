@@ -355,16 +355,34 @@ const esMX = {
       title: 'Lista',
       subtitle: 'Gestiona los registros de la tabla principal',
     },
-    actions: { new: 'Nuevo registro' },
+    actions: { new: 'Nuevo registro', export: 'Exportar' },
     filters: { column: 'Seleccione la columna', search: 'Buscar...', add: 'Agregar filtro', remove: 'Quitar filtro' },
     table: { empty: 'No se encontraron registros.' },
     modals: {
       create: 'Nuevo registro',
       update: 'Editar registro',
       delete: 'Eliminar registro',
+      export: 'Exportar registros',
     },
     delete: {
       confirm: '¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer.',
+    },
+    export: {
+      filterApplied: 'El filtro actual a continuación será considerado en la exportación.',
+      filterIgnored: 'El filtro actual a continuación será ignorado — se exportarán todos los registros.',
+      noFilter: 'No hay ningún filtro válido definido — se exportarán todos los registros.',
+      applyFilter: 'Aplicar filtro actual a la exportación',
+      estimatedSize: '{{rows}} registro(s) — tamaño estimado: {{size}}',
+      actions: {
+        calculate: 'Ver tamaño estimado',
+        confirm: 'Confirmar y descargar',
+      },
+      notifications: {
+        title: 'Exportación',
+        preparing: 'Generando el archivo de la hoja de cálculo...',
+        success: 'Descarga de "{{filename}}" completada.',
+        error: 'No se pudo generar el archivo de exportación.',
+      },
     },
     form: {
       validation: {

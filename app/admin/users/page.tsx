@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy } from 'react';
+import { lazy, useEffect, useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from 'react-i18next';
 import { UtilsFor } from '@/src/components/utils/For';
@@ -28,9 +28,20 @@ const TABS: { value: TabValue; labelKey: string }[] = [
   { value: 'rejected', labelKey: 'admin.users.tabs.rejected' },
 ];
 
+const TABS_VALUES_RECORD = TABS.reduce((acc, t) => {
+  acc[t.value] = true
+
+  return acc;
+}, {} as Record<string, boolean>)
+
 export default function AdminUsersPage() {
   const { t } = useTranslation();
   const [tab, setTab] = useQueryParamState<TabValue>('tab', 'pending');
+  const validTab = useMemo(() => !!(TABS_VALUES_RECORD[tab]), [tab]);
+
+  useEffect(() => {
+    if (!validTab) setTab('pending')
+  }, [validTab])
 
   return (
     <main className="flex flex-col flex-1 gap-6 p-6">

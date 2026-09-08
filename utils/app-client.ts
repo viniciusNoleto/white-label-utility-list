@@ -38,11 +38,15 @@ async function refreshTokens(): Promise<IAuthSession> {
   return data.data;
 }
 
-function logoutAndRedirect() {
+function handleSessionExpired() {
   useAuthStore.getState().logout();
-  // Fora da árvore React/roteador (este client roda fora de componentes) —
-  // redirect duro é aceitável aqui, ver frontend-plan.md, seção 3.
-  if (typeof window !== 'undefined') window.location.assign('/auth/login');
+  // Este client roda fora da árvore React/roteador, então não tem acesso a
+  // `useRouter()` para navegar via SPA. Em vez de um reload duro (que
+  // reiniciaria qualquer estado de tela, como listagens paginadas em
+  // andamento), só sinaliza a expiração via store — AuthHydrator observa
+  // `sessionExpired` e faz o `router.push('/auth/login')` de dentro da
+  // árvore React.
+  useAuthStore.getState().setSessionExpired(true);
 }
 
 // Rotas de auth que devolvem 401 por motivo de negócio (credenciais
@@ -89,7 +93,7 @@ async function request<T>(url: string, options: RequestInit = {}, isRetry = fals
     return request<T>(url, options, true);
   } catch (err) {
     processQueue(err);
-    logoutAndRedirect();
+    handleSessionExpired();
     throw err;
   } finally {
     isRefreshing = false;
@@ -99,6 +103,24 @@ async function request<T>(url: string, options: RequestInit = {}, isRetry = fals
 export const appClient = {
   get<T>(url: string, options?: { signal?: AbortSignal }): Promise<AppApiResponse<T>> {
     return request<T>(url, { signal: options?.signal });
+  },
+  async getBlob(url: string, options?: { signal?: AbortSignal }): Promise<{ blob: Blob; filename: string }> {
+    const { accessToken } = useAuthStore.getState();
+
+    const res = await fetch(url, {
+      signal: options?.signal,
+      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+    });
+
+    if (!res.ok) {
+      const data: AppApiResponse<null> = await res.json();
+      throw data;
+    }
+
+    const disposition = res.headers.get('Content-Disposition') ?? '';
+    const filename = disposition.match(/filename="?([^"]+)"?/)?.[1] ?? 'download';
+
+    return { blob: await res.blob(), filename };
   },
   post<T>(url: string, options: { body: any; signal?: AbortSignal }): Promise<AppApiResponse<T>> {
     return request<T>(url, {

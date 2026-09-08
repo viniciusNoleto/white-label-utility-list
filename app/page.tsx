@@ -3,14 +3,17 @@
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { AttributionFooter } from '@/src/components/layout/AttributionFooter';
+import { WavesBackground } from '@/src/components/layout/WavesBackground';
 import { BRAND_NAME } from '@/src/shared/constants/brand';
 
 export default function Home() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col flex-1">
-      <main className="flex flex-1 flex-col items-center justify-center px-6">
+    <div className="relative flex flex-col flex-1 min-h-screen">
+      <WavesBackground />
+
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6">
         <div className="flex flex-col items-center gap-8 max-w-xl text-center">
           <div className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-primary-500 flex items-center justify-center shadow-lg shadow-primary-200">
@@ -65,7 +68,9 @@ export default function Home() {
         </div>
       </main>
 
-      <AttributionFooter />
+      <div className="relative z-10">
+        <AttributionFooter />
+      </div>
     </div>
   );
 }

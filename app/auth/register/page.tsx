@@ -21,7 +21,7 @@ export default function RegisterPage() {
   return (
     <div className="flex flex-col flex-1">
       <main className="flex flex-1 items-center justify-center px-6 py-12">
-        <UtilsCard className="flex flex-col gap-6 w-full max-w-md p-10">
+        <UtilsCard className="flex flex-col gap-6 w-full max-w-md p-10 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md">
           <UtilsIf
             cases={[
               {

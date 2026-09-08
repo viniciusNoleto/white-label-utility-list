@@ -1,8 +1,9 @@
-import { desc, count, sql, and, inArray } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/libs/db';
-import { listRecords, listFields, listColumns, objectFields } from '@/db/schema';
+import { listRecords, listFields, objectFields } from '@/db/schema';
 import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
+import { parseListRecordsFilters, buildListRecordsFilterCondition } from '@/libs/list-records-filter';
 
 export async function GET(request: Request) {
   const { response } = await requireApiUser(request);
@@ -13,38 +14,8 @@ export async function GET(request: Request) {
     const page = Math.max(1, Number(searchParams.get('page')) || 1);
     const perPage = Math.max(1, Number(searchParams.get('per_page')) || 15);
 
-    let filters: { column_id: number; value: string }[] = [];
-
-    try {
-      const parsed = JSON.parse(searchParams.get('filters') ?? '[]');
-      if (Array.isArray(parsed)) {
-        filters = parsed.filter((filter): filter is { column_id: number; value: string } => !!filter?.column_id && typeof filter?.value === 'string' && filter.value.trim() !== '');
-      }
-    } catch {
-      filters = [];
-    }
-
-    let searchCondition = undefined;
-
-    if (filters.length > 0) {
-      const columnRows = await db.select().from(listColumns).where(inArray(listColumns.id, filters.map(filter => filter.column_id)));
-      const columnsById = Object.fromEntries(columnRows.map(column => [column.id, column]));
-
-      const conditions = filters
-        .map((filter) => {
-          const column = columnsById[filter.column_id];
-          if (!column) return null;
-
-          const likeValue = `%${filter.value.trim()}%`;
-
-          return column.sub_path
-            ? sql`${listRecords.values} -> ${column.field_key} ->> ${column.sub_path} ILIKE ${likeValue}`
-            : sql`${listRecords.values} ->> ${column.field_key} ILIKE ${likeValue}`;
-        })
-        .filter(condition => condition !== null);
-
-      if (conditions.length > 0) searchCondition = and(...conditions);
-    }
+    const filters = parseListRecordsFilters(searchParams);
+    const searchCondition = await buildListRecordsFilterCondition(filters);
 
     const [{ value: total }] = await db
       .select({ value: count() })

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getSessionFromCookie } from '@/libs/auth/dal';
+import { WavesBackground } from '@/src/components/layout/WavesBackground';
 
 // Equivalente ao middleware/off.ts do projeto de referência (ver
 // docs/auth/README.md): quem já tem uma sessão válida não deve ver
@@ -11,5 +12,13 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   if (session) redirect('/list');
 
-  return children;
+  return (
+    <div className="relative flex flex-col flex-1 min-h-screen">
+      <WavesBackground />
+
+      <div className="relative flex flex-col flex-1">
+        {children}
+      </div>
+    </div>
+  );
 }

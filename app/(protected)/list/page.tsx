@@ -20,6 +20,7 @@ import { getListRecordsService, GET_LIST_RECORDS_KEY, type GetListRecordsService
 import { useCreateListRecordLogicData, CreateListRecordLogicComponent } from '@/src/resources/list-record/logics/CreateListRecord';
 import { useUpdateListRecordLogicData, UpdateListRecordLogicComponent } from '@/src/resources/list-record/logics/UpdateListRecord';
 import { useDeleteListRecordLogicData, DeleteListRecordLogicComponent } from '@/src/resources/list-record/logics/DeleteListRecord';
+import { useExportListRecordsLogicData, ExportListRecordsLogicComponent } from '@/src/resources/list-record/logics/ExportListRecords';
 import { formatColumnValue } from './_components/formatColumnValue';
 import { EListFieldType } from '@/src/resources/list-field/enums/ListFieldType';
 import type { IListRecord } from '@/src/resources/list-record/models/ListRecord';
@@ -108,6 +109,7 @@ function ListaPageContent() {
   const [createOpen, setCreateOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<IListRecord | null>(null);
 
   const { data: configData } = useQuery({
@@ -132,6 +134,11 @@ function ListaPageContent() {
   );
 
   const activeFiltersKey = useMemo(() => JSON.stringify(activeFilters), [activeFilters]);
+
+  const activeFilterDescriptions = useMemo(
+    () => activeFilters.map(filter => ({ label: columnsById[filter.column_id]?.label ?? String(filter.column_id), value: filter.value })),
+    [activeFilters, columnsById],
+  );
 
   const lastActiveFiltersKeyRef = useRef(activeFiltersKey);
 
@@ -210,6 +217,10 @@ function ListaPageContent() {
     },
   });
 
+  const exportListRecordsLogicData = useExportListRecordsLogicData({
+    filters: activeFilters,
+  });
+
   function openCreate() {
     createListRecordLogicData.createListRecordReset();
     setCreateOpen(true);
@@ -224,6 +235,11 @@ function ListaPageContent() {
   function openDelete(record: IListRecord) {
     setEditingRecord(record);
     setDeleteOpen(true);
+  }
+
+  function openExport() {
+    exportListRecordsLogicData.exportListRecordsReset();
+    setExportOpen(true);
   }
 
   function addFilterRow() {
@@ -275,14 +291,24 @@ function ListaPageContent() {
           </span>
         </div>
 
-        <FormButton
-          color="primary"
-          leftIcon="lucide:plus"
-          onClick={openCreate}
-          disabled={fields.length === 0}
-        >
-          {t('list.actions.new')}
-        </FormButton>
+        <div className="flex items-center gap-3">
+          <FormButton
+            variant="default"
+            leftIcon="lucide:download"
+            onClick={openExport}
+          >
+            {t('list.actions.export')}
+          </FormButton>
+
+          <FormButton
+            color="primary"
+            leftIcon="lucide:plus"
+            onClick={openCreate}
+            disabled={fields.length === 0}
+          >
+            {t('list.actions.new')}
+          </FormButton>
+        </div>
       </div>
 
       <UtilsCard className="flex flex-col gap-4">
@@ -344,7 +370,7 @@ function ListaPageContent() {
                   <UtilsIf condition={!!row.value.trim()}>
                     {() => (
                       <FormButton
-                        variant="subtle"
+                        variant="outline"
                         color="red"
                         icon="lucide:x"
                         tooltip={t('list.filters.remove')}
@@ -446,6 +472,20 @@ function ListaPageContent() {
         <DeleteListRecordLogicComponent
           logicData={deleteListRecordLogicData}
           onCancel={() => setDeleteOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        opened={exportOpen}
+        onClose={() => setExportOpen(false)}
+        title={t('list.modals.export')}
+        size="md"
+        centered
+      >
+        <ExportListRecordsLogicComponent
+          logicData={exportListRecordsLogicData}
+          filterDescriptions={activeFilterDescriptions}
+          onCancel={() => setExportOpen(false)}
         />
       </Modal>
     </main>

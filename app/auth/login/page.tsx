@@ -21,9 +21,9 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="flex flex-col flex-1">
+    <section className="flex flex-col flex-1">
       <main className="flex flex-1 items-center justify-center px-6 py-12">
-        <UtilsCard className="flex flex-col gap-6 w-full max-w-md p-10">
+        <UtilsCard className="flex flex-col gap-6 w-full max-w-md p-10" background="bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm">
           <div className="flex items-center gap-2.5">
             <Image
               src="/logo.png"
@@ -64,6 +64,6 @@ export default function LoginPage() {
       </main>
 
       <AttributionFooter />
-    </div>
+    </section>
   );
 }

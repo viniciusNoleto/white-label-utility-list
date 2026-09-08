@@ -8,7 +8,7 @@ export function AttributionFooter() {
   const { t } = useTranslation();
 
   return (
-    <footer className="flex items-center justify-center py-4 px-6 text-xs text-gray-400 dark:text-gray-600 border-t border-gray-200 dark:border-gray-800">
+    <footer className="flex items-center justify-center py-4 px-6 text-xs text-gray-400 dark:text-gray-600 border-t border-gray-200 dark:border-gray-800 bg-stone-50/80 dark:bg-neutral-950/80 backdrop-blur-sm">
       <span>
         {t('footer.createdBy')}
         {' '}

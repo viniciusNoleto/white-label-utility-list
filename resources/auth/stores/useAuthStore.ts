@@ -45,8 +45,20 @@ type AuthState = {
   user: IAuthUser | null;
   accessToken: string | null;
   refreshToken: string | null;
+  // true quando o app-client.ts detecta refresh_token reusado/morto (ver
+  // utils/app-client.ts) — um componente próximo da raiz (AuthHydrator)
+  // observa esta flag para navegar para /auth/login via router, em vez de
+  // um reload duro de página.
+  sessionExpired: boolean;
   setUser: (user: IAuthUser | null) => void;
   setTokens: (tokens: { access_token: string; refresh_token: string }) => void;
+  // Relê os dois cookies e resincroniza o estado em memória com eles.
+  // Necessário porque `proxy.ts` pode rotacionar os tokens em SSR (gravando
+  // cookies novos) sem que este store, que só lê os cookies uma vez na
+  // criação, fique sabendo — ver AuthHydrator, que chama isto a cada
+  // navegação.
+  resyncTokens: () => void;
+  setSessionExpired: (value: boolean) => void;
   logout: () => void;
   isLogged: () => boolean;
 };
@@ -57,16 +69,27 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
   accessToken: readCookie(ACCESS_TOKEN_COOKIE),
   refreshToken: readCookie(REFRESH_TOKEN_COOKIE),
+  sessionExpired: false,
   setUser: (user) => set({ user }),
   setTokens: ({ access_token, refresh_token }) => {
     writeCookie(ACCESS_TOKEN_COOKIE, access_token);
     writeCookie(REFRESH_TOKEN_COOKIE, refresh_token);
     set({ accessToken: access_token, refreshToken: refresh_token });
   },
+  resyncTokens: () => {
+    const cookieAccessToken = readCookie(ACCESS_TOKEN_COOKIE);
+    const cookieRefreshToken = readCookie(REFRESH_TOKEN_COOKIE);
+    const { accessToken, refreshToken } = get();
+
+    if (cookieAccessToken !== accessToken || cookieRefreshToken !== refreshToken) {
+      set({ accessToken: cookieAccessToken, refreshToken: cookieRefreshToken });
+    }
+  },
+  setSessionExpired: (value) => set({ sessionExpired: value }),
   logout: () => {
     clearCookie(ACCESS_TOKEN_COOKIE);
     clearCookie(REFRESH_TOKEN_COOKIE);
-    set({ user: null, accessToken: null, refreshToken: null });
+    set({ user: null, accessToken: null, refreshToken: null, sessionExpired: false });
   },
   isLogged: () => !!get().accessToken && !!get().user,
 }));

@@ -186,6 +186,69 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
     </>
   );
 
+  const emptyRow = (
+    <tr>
+      <td
+        colSpan={colCount}
+        className="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
+      >
+        {emptyText ?? t('common.table.emptyDefault')}
+      </td>
+    </tr>
+  );
+
+  const table = (
+    <table className="w-max min-w-full text-left border-separate border-spacing-0">
+      <thead>
+        <tr className="bg-gray-50 dark:bg-neutral-800/40">
+          <UtilsFor
+            each={_columns}
+            eachKey={({item: column}) => column.field}
+          >
+            {({item: column}) => (
+              <th
+                key={column.field}
+                scope="col"
+                className={`px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-[1] bg-gray-50 dark:bg-neutral-800/40' : ''}`}
+              >
+                {column.field === 'order' ? null : column.label}
+              </th>
+            )}
+          </UtilsFor>
+
+          {showActions ? (
+            <th
+              scope="col"
+              className="px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center sticky right-0 z-[1] bg-gray-50 dark:bg-neutral-800/40"
+            >
+              {t('common.table.actionsColumn')}
+            </th>
+          ) : null}
+        </tr>
+      </thead>
+
+      <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+        <UtilsFor
+          each={rows}
+          eachKey={({ index: rowIdx }) => rowIds[rowIdx]}
+          empty={emptyRow}
+        >
+          {({item: row, index: rowIdx}) => (
+            onReorder ? (
+              <SortableTableRow id={rowIds[rowIdx]}>
+                {renderRowCells(row, rowIdx)}
+              </SortableTableRow>
+            ) : (
+              <tr className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/40 transition-colors">
+                {renderRowCells(row, rowIdx)}
+              </tr>
+            )
+          )}
+        </UtilsFor>
+      </tbody>
+    </table>
+  );
+
   const paginationSection = (
     <UtilsIf condition={!!(setPerPage || (lastPage && lastPage > 1))}>
       {() => (
@@ -250,100 +313,30 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
         </UtilsIf>
 
         <section className="overflow-x-auto">
-          <table className="w-max min-w-full text-left border-separate border-spacing-0">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-neutral-800/40">
-                <UtilsFor
-                  each={_columns}
-                  eachKey={({item: column}) => column.field}
-                >
-                  {({item: column}) => (
-                    <th
-                      key={column.field}
-                      scope="col"
-                      className={`px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-[1] bg-gray-50 dark:bg-neutral-800/40' : ''}`}
+          <UtilsIf
+            cases={[
+              {
+                condition: !!onReorder,
+                content: () => (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={rowIds}
+                      strategy={verticalListSortingStrategy}
                     >
-                      {column.field === 'order' ? null : column.label}
-                    </th>
-                  )}
-                </UtilsFor>
-
-                {showActions ? (
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center sticky right-0 z-[1] bg-gray-50 dark:bg-neutral-800/40"
-                  >
-                    {t('common.table.actionsColumn')}
-                  </th>
-                ) : null}
-              </tr>
-            </thead>
-
-            <UtilsIf condition={!!onReorder}>
-              {() => (
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext
-                    items={rowIds}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                      <UtilsFor
-                        each={rows}
-                        eachKey={({ index: rowIdx }) => rowIds[rowIdx]}
-                        empty={
-                          <tr>
-                            <td
-                              colSpan={colCount}
-                              className="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
-                            >
-                              {emptyText ?? t('common.table.emptyDefault')}
-                            </td>
-                          </tr>
-                        }
-                      >
-                        {({item: row, index: rowIdx}) => (
-                          <SortableTableRow id={rowIds[rowIdx]}>
-                            {renderRowCells(row, rowIdx)}
-                          </SortableTableRow>
-                        )}
-                      </UtilsFor>
-                    </tbody>
-                  </SortableContext>
-                </DndContext>
-              )}
-            </UtilsIf>
-
-            <UtilsIf condition={!onReorder}>
-              {() => (
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                  <UtilsFor
-                    each={rows}
-                    eachKey={({ index: rowIdx }) => rowIds[rowIdx]}
-                    empty={
-                      <tr>
-                        <td
-                          colSpan={colCount}
-                          className="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
-                        >
-                          {emptyText ?? t('common.table.emptyDefault')}
-                        </td>
-                      </tr>
-                    }
-                  >
-                    {({item: row, index: rowIdx}) => (
-                      <tr className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/40 transition-colors">
-                        {renderRowCells(row, rowIdx)}
-                      </tr>
-                    )}
-                  </UtilsFor>
-                </tbody>
-              )}
-            </UtilsIf>
-          </table>
+                      {table}
+                    </SortableContext>
+                  </DndContext>
+                ),
+              },
+              {
+                content: () => table,
+              },
+            ]}
+          />
         </section>
 
         <UtilsIf condition={paginationPosition === 'bottom'}>

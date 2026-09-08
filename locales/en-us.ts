@@ -353,16 +353,34 @@ const enUS = {
       title: 'List',
       subtitle: 'Manage the records of the main table',
     },
-    actions: { new: 'New record' },
+    actions: { new: 'New record', export: 'Export' },
     filters: { column: 'Select column', search: 'Search...', add: 'Add filter', remove: 'Remove filter' },
     table: { empty: 'No records found.' },
     modals: {
       create: 'New record',
       update: 'Edit record',
       delete: 'Delete record',
+      export: 'Export records',
     },
     delete: {
       confirm: 'Are you sure you want to delete this record? This action cannot be undone.',
+    },
+    export: {
+      filterApplied: 'The current filter below will be considered in the export.',
+      filterIgnored: 'The current filter below will be ignored — all records will be exported.',
+      noFilter: 'No valid filter is set — all records will be exported.',
+      applyFilter: 'Apply current filter to the export',
+      estimatedSize: '{{rows}} record(s) — estimated size: {{size}}',
+      actions: {
+        calculate: 'Check estimated size',
+        confirm: 'Confirm and download',
+      },
+      notifications: {
+        title: 'Export',
+        preparing: 'Generating the spreadsheet file...',
+        success: 'Download of "{{filename}}" completed.',
+        error: 'Could not generate the export file.',
+      },
     },
     form: {
       validation: {

@@ -42,5 +42,13 @@ export function formatColumnValue(
     }
   }
 
+  if (field?.type === EListFieldType.LONG_TEXT) {
+    return (
+      <span className="block max-w-75 whitespace-normal">
+        {String(raw)}
+      </span>
+    );
+  }
+
   return String(raw);
 }

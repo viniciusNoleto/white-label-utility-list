@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy } from 'react';
+import { lazy, useEffect, useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from 'react-i18next';
 import { FormSegmentedControl } from '@/src/components/form/SegmentedControl';
@@ -31,9 +31,20 @@ const TABS: { value: TabValue; labelKey: string }[] = [
   { value: 'objects', labelKey: 'admin.settings.tabs.objects' },
 ];
 
+const TABS_VALUES_RECORD = TABS.reduce((acc, t) => {
+  acc[t.value] = true
+
+  return acc;
+}, {} as Record<string, boolean>)
+
 export default function AdminSettingsPage() {
   const { t } = useTranslation();
   const [tab, setTab] = useQueryParamState<TabValue>('tab', 'fields');
+  const validTab = useMemo(() => !!(TABS_VALUES_RECORD[tab]), [tab]);
+
+  useEffect(() => {
+    if (!validTab) setTab('fields')
+  }, [validTab])
 
   return (
     <main className="flex flex-col flex-1 gap-6 p-6">
