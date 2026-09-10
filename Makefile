@@ -45,6 +45,10 @@ restart:
 	@make down
 	@make up
 
+update-build:
+	@docker compose -f $(DOCKERFILE) build $(APP_NAME)
+	@docker compose -f $(DOCKERFILE) up -d --no-deps $(APP_NAME)
+
 c :=
 exec:
 	@docker compose -f $(DOCKERFILE) exec $(APP_NAME) $(c)
