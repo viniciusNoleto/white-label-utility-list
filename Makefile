@@ -1,5 +1,7 @@
 include .env
 
+MAKEFLAGS += --no-print-directory
+
 DOCKERFILE := docker-compose.${APP_ENV}.yml
 APP_NAME := white-label-utility-list-front
 
@@ -11,58 +13,73 @@ art:
 echo-system:
 	@make art f=system
 
+echo-buda:
+	@make art f=buda
+
 build:
 	@docker compose -f $(DOCKERFILE) build --no-cache
 
 build-cache:
 	@docker compose -f $(DOCKERFILE) build
 
-up:
-	@make echo-system
-	@docker compose -f $(DOCKERFILE) up -d
+install-deps:
+	@docker compose -f $(DOCKERFILE) run --rm $(APP_NAME) npm install
+
+logs:
+	@docker logs $(APP_NAME)
 
 watch:
-	@make echo-system
 	@docker compose -f $(DOCKERFILE) up
+
+clear-up:
+	@docker compose -f $(DOCKERFILE) up -d
+
+up:
+	@make clear-up
+	@make echo-system
 
 down:
 	@docker compose -f $(DOCKERFILE) down
 
 restart:
-	@docker compose -f $(DOCKERFILE) down
-	@docker compose -f $(DOCKERFILE) up -d
-
-phoenix:
 	@make down
-	@make build-cache
 	@make up
-
-logs:
-	@docker logs -f $(APP_NAME)
 
 c :=
 exec:
 	@docker compose -f $(DOCKERFILE) exec $(APP_NAME) $(c)
 
 in-front:
-	@docker compose -f $(DOCKERFILE) exec white-label-utility-list-front /bin/sh
-
-b ?=
-npm-install:
-	@make exec c="npm install $(b)"
+	@docker compose -f $(DOCKERFILE) exec -it white-label-utility-list-front /bin/sh
 
 lint:
 	@make exec c="npm run lint"
 
-up ?=
-watch ?=
+s :=
+t :=
+m :=
+step:
+	@echo
+	@echo "█▓▒░ \033[38;2;255;196;12m[$(s)/$(t)]\033[0m $(m)"
+	@echo
+
+last-step:
+	@echo
+	@echo "░▒▓█ \033[38;2;22;198;12mWhite Label Utility List\033[0m working!!!"
+	@echo
+	@make echo-buda
+	@echo "\033[38;2;170;0;255m🞮\033[0m Vinícius Nolêto"
+	@echo "\033[38;2;170;0;255m🞉\033[0m GitHub: \033[38;2;88;166;255mhttps://github.com/viniciusNoleto\033[0m"
+	@echo "\033[38;2;170;0;255m🞉\033[0m LinkedIn: \033[38;2;88;166;255mhttps://www.linkedin.com/in/vin%C3%ADcius-nol%C3%AAto-de-ara%C3%BAjo\033[0m"
+	@echo
+
 install:
+	@make echo-system
+	@make step s=1 t=4 m="Building the Docker image..."
 	@make build
-	@echo
-	@echo "░▒▓█ \033[38;2;22;198;12mWhite Label Inventory System\033[0m installed!"
-	@echo
-ifdef up
-	@make up
-else ifdef watch
-	@make watch
-endif
+	@make step s=2 t=4 m="Installing dependencies (npm install)..."
+	@make install-deps
+	@make step s=3 t=4 m="Starting the containers..."
+	@make clear-up
+	@make step s=4 t=4 m="Finishing installation..."
+	@make last-step
