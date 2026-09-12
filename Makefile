@@ -25,6 +25,12 @@ build-cache:
 install-deps:
 	@docker compose -f $(DOCKERFILE) run --rm $(APP_NAME) npm install
 
+db-migrate:
+	@docker compose -f $(DOCKERFILE) exec $(APP_NAME) npm run db:migrate
+
+db-seed:
+	@docker compose -f $(DOCKERFILE) exec $(APP_NAME) npm run db:seed
+
 logs:
 	@docker logs $(APP_NAME)
 
@@ -79,11 +85,15 @@ last-step:
 
 install:
 	@make echo-system
-	@make step s=1 t=4 m="Building the Docker image..."
+	@make step s=1 t=5 m="Building the Docker image..."
 	@make build
-	@make step s=2 t=4 m="Installing dependencies (npm install)..."
+	@make step s=2 t=5 m="Installing dependencies (npm install)..."
 	@make install-deps
-	@make step s=3 t=4 m="Starting the containers..."
+	@make step s=3 t=5 m="Starting the containers..."
 	@make clear-up
-	@make step s=4 t=4 m="Finishing installation..."
+	@make step s=4 t=5 m="Running database migrations..."
+	@make db-migrate
+	@make step s=5 t=6 m="Running database seeds..."
+	@make db-seed
+	@make step s=6 t=6 m="Finishing installation..."
 	@make last-step
