@@ -51,8 +51,8 @@ function parseFiltersParam(raw: string | null): ListFilterRow[] {
     if (!Array.isArray(parsed)) return [];
 
     return parsed
-      .filter((item): item is { column_id: string; value: string } => !!item && typeof item.column_id === 'string')
-      .map(item => ({ id: crypto.randomUUID(), columnId: item.column_id, value: typeof item.value === 'string' ? item.value : '' }));
+      .filter((item): item is { column_id: string | number; value: string } => !!item && (typeof item.column_id === 'string' || typeof item.column_id === 'number'))
+      .map(item => ({ id: crypto.randomUUID(), columnId: String(item.column_id), value: typeof item.value === 'string' ? item.value : '' }));
   } catch {
     return [];
   }
@@ -167,7 +167,7 @@ function ListaPageContent() {
 
     const activeFilters = nextFilterRows
       .filter(row => row.columnId)
-      .map(row => ({ column_id: row.columnId, value: row.value }));
+      .map(row => ({ column_id: String(row.columnId), value: row.value }));
 
     if (activeFilters.length > 0) params.set('filters', JSON.stringify(activeFilters));
 
@@ -329,7 +329,7 @@ function ListaPageContent() {
                     valueField="id"
                     labelField="label"
                     value={row.columnId}
-                    onChange={v => setFilterColumn(row.id, v ?? '')}
+                    onChange={v => setFilterColumn(row.id, v ? String(v) : '')}
                     clearable
                     className="w-56"
                   />

@@ -67,12 +67,13 @@ export function CreateInternalListLogicComponent({ logicData, onCancel }: { logi
       onSubmit={submit}
       className="flex flex-col gap-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+      <div className="form-grid">
         <FormTextInput
           label={t('admin.settings.lists.name.label')}
           placeholder={t('admin.settings.lists.name.placeholder')}
           {...internalListField('name')}
           required
+          className="col-span-12"
         />
 
         <FormTextInput
@@ -81,6 +82,7 @@ export function CreateInternalListLogicComponent({ logicData, onCancel }: { logi
           description={t('admin.settings.lists.key.description')}
           {...internalListField('key')}
           required
+          className="col-span-12"
         />
 
         <FormSelect
@@ -92,6 +94,7 @@ export function CreateInternalListLogicComponent({ logicData, onCancel }: { logi
           ]}
           {...internalListField('display_style')}
           required
+          className="col-span-12"
         />
       </div>
 

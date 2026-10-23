@@ -218,7 +218,7 @@ const ptBR = {
           delete: 'Excluir coluna',
         },
         field: { label: 'Campo', placeholder: 'Selecione o campo' },
-        subPath: { label: 'Subcampo' },
+        subPath: { label: 'Subcampo', placeholder: 'Selecione o subcampo' },
         label: { label: 'Rótulo da coluna', placeholder: 'Ex: Endereço' },
         validation: {
           fieldRequired: 'Campo é obrigatório',

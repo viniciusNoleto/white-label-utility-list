@@ -1,5 +1,3 @@
-// Stub declarations for packages not yet installed
-// Replace with real packages: npm install ofetch js-cookie @types/js-cookie
 
 declare module 'ofetch' {
   export type FetchOptions = Omit<RequestInit, 'headers' | 'body'> & {

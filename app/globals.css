@@ -29,6 +29,33 @@ html {
   @apply grow;
 }
 
+.form-grid {
+  @apply grid grid-cols-12 gap-6;
+}
+
+/*
+ * Layout para formulários dinâmicos (campos definidos em runtime).
+ * Itens `half` medem metade da linha descontando o gap; se ficarem sozinhos
+ * na linha (vizinho `full` ou contagem ímpar), o flex-grow os expande para 100%.
+ */
+.form-flex {
+  --form-flex-gap: 1.5rem;
+  @apply flex flex-wrap;
+  gap: var(--form-flex-gap);
+}
+
+.form-flex > .form-flex-full,
+.form-flex > .form-flex-half {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+@media (width >= 40rem) {
+  .form-flex > .form-flex-half {
+    flex-basis: calc((100% - var(--form-flex-gap)) / 2);
+  }
+}
+
 .merge-children {
   @apply grid grid-cols-1 grid-rows-1;
   grid-template-areas: 'merge';

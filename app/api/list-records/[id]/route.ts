@@ -3,6 +3,7 @@ import { db } from '@/libs/db';
 import { listRecords } from '@/db/schema';
 import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
+import { validateListRecordValues } from '@/libs/list-records-validation';
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { response } = await requireApiUser(request);
@@ -14,6 +15,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const values = body.values;
 
     if (!values || typeof values !== 'object') return jsonError(MESSAGES.invalidPayload, 422);
+
+    const validationError = await validateListRecordValues(values);
+    if (validationError) return jsonError(validationError, 422);
 
     const [updated] = await db
       .update(listRecords)

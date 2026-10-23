@@ -6,13 +6,30 @@ services:
     tty: true
     build:
       dockerfile: ./configs/docker/node/Dockerfile.deploy
-    ports:
-      - 80:3000
     networks:
       - white-label-utility-list-network
     depends_on:
       white-label-utility-list-postgres:
         condition: service_healthy
+
+  white-label-utility-list-server:
+    container_name: white-label-utility-list-server
+    restart: unless-stopped
+    tty: true
+    build:
+      dockerfile: ./configs/docker/nginx/Dockerfile.deploy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./configs/docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./configs/docker/nginx/conf/route.conf:/etc/nginx/conf.d/route.conf
+      - ./configs/docker/nginx/nginx-502-page.html:/nginx-502-page.html
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    networks:
+      - white-label-utility-list-network
+    depends_on:
+      - white-label-utility-list-front
 
   white-label-utility-list-postgres:
     container_name: white-label-utility-list-postgres

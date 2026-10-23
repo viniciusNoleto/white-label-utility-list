@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IObjectField } from '../models/Object';
 import type { PayloadBody } from '@/src/shared/types/api';
 import type { EListFieldType } from '@/src/resources/list-field/enums/ListFieldType';

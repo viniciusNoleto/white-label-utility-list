@@ -8,9 +8,6 @@ export type AppApiResponse<T> = {
   data: T;
 };
 
-// Fila de espera enquanto um refresh está em voo — ver frontend-plan.md,
-// seção 3. Qualquer chamada que tome 401 durante um refresh já em
-// andamento entra aqui em vez de disparar um segundo refresh em paralelo.
 let isRefreshing = false;
 let failedQueue: Array<{ resolve: () => void; reject: (err: unknown) => void }> = [];
 
@@ -19,11 +16,6 @@ function processQueue(error: unknown | null) {
   failedQueue = [];
 }
 
-// Chamada crua (sem passar por `request`) para o próprio endpoint de
-// refresh — não é exposta como um `service` de `resources/auth/services/`
-// porque é uma dependência interna do client, chamada de dentro de
-// `request()`; um service normal importaria `appClient`, que importaria de
-// volta este arquivo (referência circular). Ver frontend-plan.md, seção 3.
 async function refreshTokens(): Promise<IAuthSession> {
   const { refreshToken } = useAuthStore.getState();
 
@@ -40,19 +32,9 @@ async function refreshTokens(): Promise<IAuthSession> {
 
 function handleSessionExpired() {
   useAuthStore.getState().logout();
-  // Este client roda fora da árvore React/roteador, então não tem acesso a
-  // `useRouter()` para navegar via SPA. Em vez de um reload duro (que
-  // reiniciaria qualquer estado de tela, como listagens paginadas em
-  // andamento), só sinaliza a expiração via store — AuthHydrator observa
-  // `sessionExpired` e faz o `router.push('/auth/login')` de dentro da
-  // árvore React.
   useAuthStore.getState().setSessionExpired(true);
 }
 
-// Rotas de auth que devolvem 401 por motivo de negócio (credenciais
-// inválidas, refresh token expirado/revogado) — nunca por access_token
-// vencido, já que essas chamadas não mandam `Authorization`. Um 401 nelas
-// não deve disparar o fluxo de refresh (não há sessão a renovar).
 const AUTH_NO_REFRESH_PREFIXES = ['/api/auth/login', '/api/auth/register', '/api/auth/token/refresh'];
 
 function isAuthNoRefreshUrl(url: string) {
@@ -101,10 +83,7 @@ async function request<T>(url: string, options: RequestInit = {}, isRetry = fals
 }
 
 export const appClient = {
-  get<T>(url: string, options?: { signal?: AbortSignal }): Promise<AppApiResponse<T>> {
-    return request<T>(url, { signal: options?.signal });
-  },
-  async getBlob(url: string, options?: { signal?: AbortSignal }): Promise<{ blob: Blob; filename: string }> {
+  async blob(url: string, options?: { signal?: AbortSignal }): Promise<{ blob: Blob; filename: string }> {
     const { accessToken } = useAuthStore.getState();
 
     const res = await fetch(url, {
@@ -121,6 +100,9 @@ export const appClient = {
     const filename = disposition.match(/filename="?([^"]+)"?/)?.[1] ?? 'download';
 
     return { blob: await res.blob(), filename };
+  },
+  get<T>(url: string, options?: { signal?: AbortSignal }): Promise<AppApiResponse<T>> {
+    return request<T>(url, { signal: options?.signal });
   },
   post<T>(url: string, options: { body: any; signal?: AbortSignal }): Promise<AppApiResponse<T>> {
     return request<T>(url, {

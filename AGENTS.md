@@ -17,6 +17,7 @@ Cada arquivo em `.claude/rules/` documenta a interface exata, o comportamento in
 | Ao usar... | Leia |
 |---|---|
 | `<form>` / submit | `components-form.md` |
+| Layout/responsividade de campos (`form-grid`, spans) | `form-grid.md` |
 | `FormTextInput`, `FormPassword`, `FormTextarea`, `FormNumberInput` | `components-form-inputs.md` |
 | `FormSelect` | `components-form-select.md` |
 | `FormSwitch` (campo booleano) | `components-form-switch.md` |

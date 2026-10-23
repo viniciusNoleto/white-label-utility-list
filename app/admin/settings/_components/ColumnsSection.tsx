@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { UtilsTable, UtilsTableDragHandle } from '@/src/components/utils/Table';
 import { FormButton } from '@/src/components/form/Button';
 import { resolveApiMessage } from '@/src/utils/apiMessage';
-import type { AppApiResponse } from '@/src/utils/app-client';
+import type { AppApiResponse } from '@/src/utils/appClient';
 import { getListColumnsService, GET_LIST_COLUMNS_KEY } from '@/src/resources/list-column/services/getListColumns';
 import { GET_LIST_CONFIG_KEY } from '@/src/resources/list-config/services/getListConfig';
 import { updateListColumnService } from '@/src/resources/list-column/services/updateListColumn';
@@ -203,7 +203,7 @@ export function ColumnsSection() {
         opened={createOpen}
         onClose={() => setCreateOpen(false)}
         title={t('admin.settings.columns.modals.create')}
-        size="lg"
+        size="md"
         centered
       >
         <CreateListColumnLogicComponent
@@ -218,7 +218,7 @@ export function ColumnsSection() {
         opened={updateOpen}
         onClose={() => setUpdateOpen(false)}
         title={t('admin.settings.columns.modals.update')}
-        size="lg"
+        size="md"
         centered
       >
         <UpdateListColumnLogicComponent

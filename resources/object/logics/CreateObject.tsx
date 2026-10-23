@@ -111,12 +111,13 @@ export function CreateObjectLogicComponent({
       onSubmit={submit}
       className="flex flex-col gap-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+      <div className="form-grid">
         <FormTextInput
           label={t('admin.settings.objects.name.label')}
           placeholder={t('admin.settings.objects.name.placeholder')}
           {...objectField('name')}
           required
+          className="col-span-12"
         />
 
         <FormTextInput
@@ -125,6 +126,7 @@ export function CreateObjectLogicComponent({
           description={t('admin.settings.objects.key.description')}
           {...objectField('key')}
           required
+          className="col-span-12"
         />
       </div>
 

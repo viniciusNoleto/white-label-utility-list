@@ -27,7 +27,7 @@ import { UtilsFor } from '@/src/components/utils/For';
 import { UtilsIf } from '@/src/components/utils/If';
 import { FormButton } from '@/src/components/form/Button';
 import { resolveApiMessage } from '@/src/utils/apiMessage';
-import type { AppApiResponse } from '@/src/utils/app-client';
+import type { AppApiResponse } from '@/src/utils/appClient';
 import { getInternalListsService, GET_INTERNAL_LISTS_KEY } from '@/src/resources/internal-list/services/getInternalLists';
 import { updateInternalListItemService } from '@/src/resources/internal-list/services/updateInternalListItem';
 import { GET_LIST_CONFIG_KEY } from '@/src/resources/list-config/services/getListConfig';
@@ -156,6 +156,7 @@ function InternalListDetail({
 
       <CreateInternalListItemInline
         listId={list.id}
+        showColor={list.display_style === EInternalListDisplayStyle.BADGE}
         onCreated={onItemChanged}
       />
 

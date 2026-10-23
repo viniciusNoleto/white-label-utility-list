@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IListConfig } from '../models/ListConfig';
 import type { QueryFnCtx } from '@/src/shared/types/tanstack';
 

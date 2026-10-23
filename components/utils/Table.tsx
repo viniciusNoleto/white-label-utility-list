@@ -24,6 +24,14 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+// Hover aplicado em cada célula (e não no <tr>) com cor opaca e sem transição, para que as
+// células sticky (nº da linha / ações) mudem de cor exatamente junto com as demais.
+const ROW_CELL_HOVER = 'group-hover:bg-gray-50 dark:group-hover:bg-neutral-800';
+
+// Fundo do cabeçalho aplicado em cada <th> (e não no <tr>) com cor opaca, para que as colunas
+// sticky não empilhem duas camadas translúcidas. #1d1d1d = neutral-800/40 sobre neutral-900 (fundo do card).
+const HEADER_CELL_BG = 'bg-gray-50 dark:bg-[#1d1d1d]';
+
 export type TableProps<T extends object, U extends Record<string, string>> = {
   title?: string;
   rows: T[];
@@ -149,7 +157,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
         eachKey={({item: column}) => column.field}
       >
         {({item: column}) => (
-          <td className={`px-6 py-4 text-sm whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-1 bg-white dark:bg-neutral-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/40' : ''}`}>
+          <td className={`px-6 py-4 text-sm whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-1 bg-white dark:bg-neutral-900' : ''} ${ROW_CELL_HOVER}`}>
             {
               renderCells && renderCells[column.field] ?
                 renderCells[column.field]!({
@@ -166,7 +174,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
       </UtilsFor>
 
       {showActions ? (
-        <td className="px-6 py-4 text-center sticky right-0 z-1 bg-white dark:bg-neutral-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/40">
+        <td className={`px-6 py-4 text-center sticky right-0 z-1 bg-white dark:bg-neutral-900 ${ROW_CELL_HOVER}`}>
           <div className="flex items-center justify-center gap-2">
             <UtilsFor each={typeof actions === 'function' ? actions({ item: row, index: rowIdx }) : (actions || [])}>
               {({item: action}) => (
@@ -200,7 +208,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
   const table = (
     <table className="w-max min-w-full text-left border-separate border-spacing-0">
       <thead>
-        <tr className="bg-gray-50 dark:bg-neutral-800/40">
+        <tr>
           <UtilsFor
             each={_columns}
             eachKey={({item: column}) => column.field}
@@ -209,7 +217,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
               <th
                 key={column.field}
                 scope="col"
-                className={`px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-[1] bg-gray-50 dark:bg-neutral-800/40' : ''}`}
+                className={`px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider whitespace-nowrap ${HEADER_CELL_BG} ${column.field === 'actions' || column.field === ROW_NUMBER_FIELD ? 'text-center' : ''} ${column.field === ROW_NUMBER_FIELD ? 'sticky left-0 z-[1]' : ''}`}
               >
                 {column.field === 'order' ? null : column.label}
               </th>
@@ -219,7 +227,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
           {showActions ? (
             <th
               scope="col"
-              className="px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center sticky right-0 z-[1] bg-gray-50 dark:bg-neutral-800/40"
+              className={`px-6 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider text-center sticky right-0 z-[1] ${HEADER_CELL_BG}`}
             >
               {t('common.table.actionsColumn')}
             </th>
@@ -239,7 +247,7 @@ export function UtilsTable<T extends object, U extends Record<string, string>>({
                 {renderRowCells(row, rowIdx)}
               </SortableTableRow>
             ) : (
-              <tr className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/40 transition-colors">
+              <tr className="group">
                 {renderRowCells(row, rowIdx)}
               </tr>
             )
@@ -369,7 +377,7 @@ function SortableTableRow({ id, children }: { id: string | number; children: Rea
     <tr
       ref={setNodeRef}
       style={style}
-      className={`group hover:bg-gray-50/50 dark:hover:bg-gray-800/40 transition-colors ${isDragging ? 'relative z-10 bg-white dark:bg-neutral-900 shadow-lg' : ''}`}
+      className={`group ${isDragging ? 'relative z-10 bg-white dark:bg-neutral-900 shadow-lg' : ''}`}
     >
       <TableDragHandleContext.Provider value={dragHandleValue}>
         {children}

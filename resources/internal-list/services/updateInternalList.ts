@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IInternalList } from '../models/InternalList';
 import type { EInternalListDisplayStyle } from '../enums/InternalListDisplayStyle';
 import type { PayloadBody } from '@/src/shared/types/api';

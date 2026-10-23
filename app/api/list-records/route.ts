@@ -1,9 +1,10 @@
 import { desc, count } from 'drizzle-orm';
 import { db } from '@/libs/db';
-import { listRecords, listFields, objectFields } from '@/db/schema';
+import { listRecords } from '@/db/schema';
 import { requireApiUser } from '@/libs/auth/dal';
 import { jsonOk, jsonError, msg, MESSAGES } from '@/libs/api';
 import { parseListRecordsFilters, buildListRecordsFilterCondition } from '@/libs/list-records-filter';
+import { validateListRecordValues } from '@/libs/list-records-validation';
 
 export async function GET(request: Request) {
   const { response } = await requireApiUser(request);
@@ -58,37 +59,8 @@ export async function POST(request: Request) {
 
     if (!values || typeof values !== 'object') return jsonError(MESSAGES.invalidPayload, 422);
 
-    const fields = await db.select().from(listFields);
-    const objectFieldRows = await db.select().from(objectFields);
-
-    for (const field of fields) {
-      const value = (values as Record<string, any>)[field.key];
-
-      if (field.type === 'object') {
-        const requiredSubFields = objectFieldRows.filter(sub => sub.object_id === field.object_id && sub.required);
-
-        for (const subField of requiredSubFields) {
-          const subValue = value?.[subField.key];
-
-          if (subValue === undefined || subValue === null || String(subValue).trim() === '') {
-            return jsonError(
-              msg(`O campo "${subField.label}" é obrigatório em "${field.label}".`, `El campo "${subField.label}" es obligatorio en "${field.label}".`, `Field "${subField.label}" is required in "${field.label}".`),
-              422,
-            );
-          }
-        }
-        continue;
-      }
-
-      if (!field.required) continue;
-
-      if (value === undefined || value === null || String(value).trim() === '') {
-        return jsonError(
-          msg(`O campo "${field.label}" é obrigatório.`, `El campo "${field.label}" es obligatorio.`, `Field "${field.label}" is required.`),
-          422,
-        );
-      }
-    }
+    const validationError = await validateListRecordValues(values);
+    if (validationError) return jsonError(validationError, 422);
 
     const [created] = await db.insert(listRecords).values({
       values,

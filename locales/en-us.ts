@@ -216,7 +216,7 @@ const enUS = {
           delete: 'Delete column',
         },
         field: { label: 'Field', placeholder: 'Select the field' },
-        subPath: { label: 'Sub-field' },
+        subPath: { label: 'Sub-field', placeholder: 'Select the sub-field' },
         label: { label: 'Column label', placeholder: 'E.g.: Address' },
         validation: {
           fieldRequired: 'Field is required',

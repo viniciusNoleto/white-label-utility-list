@@ -160,7 +160,7 @@ Padrão: calcule todas as mudanças de posição de uma vez, dispare uma única 
 
 ```tsx
 import { UtilsTable, UtilsTableDragHandle } from '@/src/components/utils/Table';
-import type { AppApiResponse } from '@/src/utils/app-client';
+import type { AppApiResponse } from '@/src/utils/appClient';
 
 const reorderMutation = useMutation({
   mutationFn: (changes: { columnId: number; position: number }[]) =>

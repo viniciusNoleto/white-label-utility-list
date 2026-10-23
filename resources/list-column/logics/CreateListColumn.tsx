@@ -90,7 +90,7 @@ export function CreateListColumnLogicComponent({
       onSubmit={submit}
       className="flex flex-col gap-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+      <div className="form-grid">
         <FormSelect
           label={t('admin.settings.columns.field.label')}
           placeholder={t('admin.settings.columns.field.placeholder')}
@@ -104,27 +104,30 @@ export function CreateListColumnLogicComponent({
           }}
           clearable={false}
           required
-        />
-
-        <FormTextInput
-          label={t('admin.settings.columns.label.label')}
-          placeholder={t('admin.settings.columns.label.placeholder')}
-          {...columnField('label')}
-          required
+          className="col-span-12"
         />
 
         {selectedObject ? (
           <FormSelect
             label={t('admin.settings.columns.subPath.label')}
+            placeholder={t('admin.settings.columns.subPath.placeholder')}
             data={[...selectedObject.fields]
               .sort((a, b) => a.position - b.position)
               .map(objectField => ({ value: objectField.key, label: objectField.label }))}
             {...columnField('sub_path')}
             clearable={false}
             required
-            className="sm:col-span-2"
+            className="col-span-12"
           />
         ) : null}
+
+        <FormTextInput
+          label={t('admin.settings.columns.label.label')}
+          placeholder={t('admin.settings.columns.label.placeholder')}
+          {...columnField('label')}
+          required
+          className="col-span-12"
+        />
       </div>
 
       <div className="flex justify-end gap-2 pt-2 border-t border-gray-100">

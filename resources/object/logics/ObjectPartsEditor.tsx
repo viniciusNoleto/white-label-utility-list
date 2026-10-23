@@ -8,6 +8,7 @@ import { FormSelect } from '@/src/components/form/Select';
 import { EListFieldType, OBJECT_FIELD_TYPES } from '@/src/resources/list-field/enums/ListFieldType';
 import type { IObjectField } from '../models/Object';
 import type { IInternalList } from '@/src/resources/internal-list/models/InternalList';
+import { cn } from '@/src/libs/utils';
 
 export type ObjectPartDraft = {
   localId: string;
@@ -105,62 +106,73 @@ export function ObjectPartsEditor({
           {t('admin.settings.objects.parts.empty')}
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <UtilsFor
             each={parts}
             eachKey={({ item }) => item.localId}
           >
-            {({ item: part }) => (
-              <div className="flex flex-wrap items-center gap-2">
-                <FormTextInput
-                  placeholder={t('admin.settings.objects.fields.label.placeholder')}
-                  value={part.label}
-                  onChange={value => updatePart(part.localId, { label: value })}
-                  className="flex-1 min-w-[140px]"
-                />
+            {({ item: part, index }) => (
+              <div className="flex flex-col gap-3 p-3 rounded-lg border border-gray-200 dark:border-neutral-700">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-medium text-gray-400">
+                    {`#${index + 1}`}
+                  </span>
 
-                <FormTextInput
-                  placeholder={t('admin.settings.objects.fields.key.placeholder')}
-                  value={part.key}
-                  onChange={value => updatePart(part.localId, { key: value })}
-                  disabled={part.id !== null}
-                  className="w-36 font-mono"
-                />
+                  <div className="flex items-center gap-1">
+                    <FormButton
+                      icon="lucide:asterisk"
+                      tooltip={t('admin.settings.objects.fields.required.label')}
+                      variant={part.required ? 'light' : 'subtle'}
+                      color={part.required ? 'primary' : 'gray'}
+                      onClick={() => updatePart(part.localId, { required: !part.required })}
+                    />
 
-                <FormSelect
-                  data={OBJECT_FIELD_TYPES.map(value => ({ value, label: t(`admin.settings.fields.types.${value}`) }))}
-                  value={part.type}
-                  onChange={value => updatePart(part.localId, { type: (value ?? EListFieldType.TEXT) as `${EListFieldType}` })}
-                  clearable={false}
-                  className="w-40"
-                />
+                    <FormButton
+                      icon="lucide:trash-2"
+                      tooltip={t('common.actions.delete')}
+                      variant="subtle"
+                      color="red"
+                      onClick={() => removePart(part.localId)}
+                    />
+                  </div>
+                </div>
 
-                {part.type === EListFieldType.SELECT ? (
-                  <FormSelect
-                    placeholder={t('admin.settings.fields.internalList.placeholder')}
-                    data={internalLists}
-                    valueField="id"
-                    labelField="name"
-                    value={part.internal_list_id}
-                    onChange={value => updatePart(part.localId, { internal_list_id: value ? Number(value) : null })}
-                    className="w-40"
+                <div className="form-grid">
+                  <FormTextInput
+                    placeholder={t('admin.settings.objects.fields.label.placeholder')}
+                    value={part.label}
+                    onChange={value => updatePart(part.localId, { label: value })}
+                    className={part.type === EListFieldType.SELECT ? "col-span-12 sm:col-span-6" : "col-span-12 sm:col-span-5"}
                   />
-                ) : null}
 
-                <FormButton
-                  icon="lucide:asterisk"
-                  tooltip={t('admin.settings.objects.fields.required.label')}
-                  variant={part.required ? 'light' : 'subtle'}
-                  color={part.required ? 'primary' : 'gray'}
-                  onClick={() => updatePart(part.localId, { required: !part.required })}
-                />
+                  <FormTextInput
+                    placeholder={t('admin.settings.objects.fields.key.placeholder')}
+                    value={part.key}
+                    onChange={value => updatePart(part.localId, { key: value })}
+                    disabled={part.id !== null}
+                    className={cn("font-mono", part.type === EListFieldType.SELECT ? "col-span-12 sm:col-span-6" : "col-span-6 sm:col-span-4")}
+                  />
 
-                <FormButton
-                  icon="lucide:trash-2"
-                  variant="subtle"
-                  color="red"
-                  onClick={() => removePart(part.localId)}
-                />
+                  <FormSelect
+                    data={OBJECT_FIELD_TYPES.map(value => ({ value, label: t(`admin.settings.fields.types.${value}`) }))}
+                    value={part.type}
+                    onChange={value => updatePart(part.localId, { type: (value ?? EListFieldType.TEXT) as `${EListFieldType}` })}
+                    clearable={false}
+                    className={part.type === EListFieldType.SELECT ? "col-span-12 sm:col-span-6" : "col-span-6 sm:col-span-3"}
+                  />
+
+                  {part.type === EListFieldType.SELECT ? (
+                    <FormSelect
+                      placeholder={t('admin.settings.fields.internalList.placeholder')}
+                      data={internalLists}
+                      valueField="id"
+                      labelField="name"
+                      value={part.internal_list_id}
+                      onChange={value => updatePart(part.localId, { internal_list_id: value ? Number(value) : null })}
+                      className="col-span-12 sm:col-span-6"
+                    />
+                  ) : null}
+                </div>
               </div>
             )}
           </UtilsFor>

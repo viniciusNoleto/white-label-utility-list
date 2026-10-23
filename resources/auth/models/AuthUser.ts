@@ -6,8 +6,6 @@ export interface IAuthUser {
   status: string;
 }
 
-// Payload devolvido por login/token/refresh — par de tokens + usuário atual.
-// Ver docs/auth/backend-plan.md, seção "Rotas — contrato final".
 export interface IAuthSession {
   user: IAuthUser;
   access_token: string;

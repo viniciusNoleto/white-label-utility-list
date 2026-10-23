@@ -38,7 +38,7 @@ para um modelo de dois tokens (access + refresh), documentada em
    `api-response-format.md`. Este plano de auth não substitui essas regras —
    qualquer código novo em `resources/auth/` segue os mesmos padrões usados
    no resto do projeto.
-5. Leia os arquivos atuais antes de editá-los: `utils/app-client.ts`,
+5. Leia os arquivos atuais antes de editá-los: `utils/appClient.ts`,
    `resources/auth/models/AuthUser.ts`, `resources/auth/services/loginUser.ts`,
    `resources/auth/services/logoutUser.ts`, `resources/auth/logics/Login.tsx`,
    `app/(protected)/layout.tsx`.
@@ -56,7 +56,7 @@ Tudo o que está descrito em `docs/auth/frontend-plan.md`, nas seções 1 a 7:
   `auth-backend` já tiver produzido em `libs/auth/jwt.ts`; se ainda não
   existir, use `access_token`/`refresh_token` como definido em
   `backend-plan.md`).
-- Estender `utils/app-client.ts` (ou extrair `resources/auth/http/authClient.ts`,
+- Estender `utils/appClient.ts` (ou extrair `resources/auth/http/authClient.ts`,
   decida e documente a escolha) para injetar `Authorization: Bearer` e
   implementar a renovação automática em 401 com fila (`isRefreshing`/
   `failedQueue`), sem quebrar a assinatura hoje usada pelos `services/`

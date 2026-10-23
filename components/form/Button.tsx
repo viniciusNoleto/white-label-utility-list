@@ -15,8 +15,11 @@ export type FormButtonProps = ButtonProps & {
 };
 
 export function FormButton({ leftIcon, rightIcon, ...props }: FormButtonProps) {
+  const isIconOnly = !props.children && !props.label && !!props.icon;
+
   const button = (
     <Button
+      aria-label={isIconOnly ? props.tooltip : undefined}
       {...props}
       leftSection={ leftIcon ? <Icon icon={leftIcon} className="w-4 h-4" /> : props.leftSection }
       rightSection={ rightIcon ? <Icon icon={rightIcon} className="w-4 h-4" /> : props.rightSection }

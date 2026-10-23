@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IListColumn } from '../models/ListColumn';
 import type { PayloadBody } from '@/src/shared/types/api';
 

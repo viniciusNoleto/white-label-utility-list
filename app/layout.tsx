@@ -1,21 +1,8 @@
 import type { Metadata } from 'next';
-import { Outfit, JetBrains_Mono } from 'next/font/google';
 import { ColorSchemeScript } from '@mantine/core';
 import { Providers } from './providers';
 import { BRAND_NAME } from '@/src/shared/constants/brand';
 import './globals.css';
-
-const outfit = Outfit({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-outfit',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-jbmono',
-});
 
 export const metadata: Metadata = {
   title: BRAND_NAME,
@@ -30,7 +17,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`h-full antialiased ${outfit.variable} ${jetbrainsMono.variable}`}
+      className="h-full"
       suppressHydrationWarning
     >
       <head>

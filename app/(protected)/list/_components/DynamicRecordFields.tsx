@@ -34,6 +34,8 @@ function renderFieldWidget({
   field: FieldAccessor;
   t: TFunction;
 }) {
+  const className = type === EListFieldType.LONG_TEXT ? 'form-flex-full' : 'form-flex-half';
+
   if (type === EListFieldType.SELECT) {
     const options = internalLists.find(l => l.id === internalListId)?.items ?? [];
 
@@ -46,6 +48,7 @@ function renderFieldWidget({
         labelField="label"
         {...field(path)}
         required={required}
+        className={className}
       />
     );
   }
@@ -56,6 +59,7 @@ function renderFieldWidget({
         label={label}
         {...field(path)}
         required={required}
+        className={className}
       />
     );
   }
@@ -66,6 +70,7 @@ function renderFieldWidget({
         label={label}
         {...field(path)}
         required={required}
+        className={className}
       />
     );
   }
@@ -77,6 +82,7 @@ function renderFieldWidget({
         rows={4}
         {...field(path)}
         required={required}
+        className={className}
       />
     );
   }
@@ -86,6 +92,7 @@ function renderFieldWidget({
       label={label}
       {...field(path)}
       required={required}
+      className={className}
     />
   );
 }
@@ -104,7 +111,7 @@ export function DynamicRecordFields({
   const { t } = useTranslation();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+    <div className="form-flex">
       <UtilsFor
         each={[...fields].sort((a, b) => a.position - b.position)}
         eachKey={({ item }) => item.id}
@@ -115,7 +122,7 @@ export function DynamicRecordFields({
             const objectFields = object ? [...object.fields].sort((a, b) => a.position - b.position) : [];
 
             return (
-              <div className="sm:col-span-2 flex flex-col gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/60 dark:bg-neutral-800/40">
+              <div className="form-flex-full flex flex-col gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/60 dark:bg-neutral-800/40">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded-full bg-primary-50 dark:bg-primary-950 text-primary-600 dark:text-primary-400 text-[11px] font-medium">
                     {t('list.form.objectBadge')}
@@ -126,7 +133,7 @@ export function DynamicRecordFields({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                <div className="form-flex">
                   <UtilsFor
                     each={objectFields}
                     eachKey={({ item }) => item.id}
@@ -147,7 +154,7 @@ export function DynamicRecordFields({
             );
           }
 
-          const widget = renderFieldWidget({
+          return renderFieldWidget({
             type: listField.type,
             label: listField.label,
             required: listField.required,
@@ -157,12 +164,6 @@ export function DynamicRecordFields({
             field,
             t,
           });
-
-          return listField.type === EListFieldType.LONG_TEXT ? (
-            <div className="sm:col-span-2">
-              {widget}
-            </div>
-          ) : widget;
         }}
       </UtilsFor>
     </div>

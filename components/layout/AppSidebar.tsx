@@ -59,6 +59,7 @@ export function AppSidebar({ user, open, onClose }: { user: IAuthUser; open: boo
 
           <button
             type="button"
+            aria-label={t('common.actions.close')}
             onClick={onClose}
             className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
           >

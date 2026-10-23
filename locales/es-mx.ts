@@ -218,7 +218,7 @@ const esMX = {
           delete: 'Eliminar columna',
         },
         field: { label: 'Campo', placeholder: 'Selecciona el campo' },
-        subPath: { label: 'Subcampo' },
+        subPath: { label: 'Subcampo', placeholder: 'Seleccione el subcampo' },
         label: { label: 'Etiqueta de la columna', placeholder: 'Ej: Dirección' },
         validation: {
           fieldRequired: 'El campo es obligatorio',

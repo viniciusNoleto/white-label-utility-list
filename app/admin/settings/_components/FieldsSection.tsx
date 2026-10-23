@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { UtilsTable, UtilsTableDragHandle } from '@/src/components/utils/Table';
 import { FormButton } from '@/src/components/form/Button';
 import { resolveApiMessage } from '@/src/utils/apiMessage';
-import type { AppApiResponse } from '@/src/utils/app-client';
+import type { AppApiResponse } from '@/src/utils/appClient';
 import { getListFieldsService, GET_LIST_FIELDS_KEY } from '@/src/resources/list-field/services/getListFields';
 import { getInternalListsService, GET_INTERNAL_LISTS_KEY } from '@/src/resources/internal-list/services/getInternalLists';
 import { getObjectsService, GET_OBJECTS_KEY } from '@/src/resources/object/services/getObjects';
@@ -227,7 +227,7 @@ export function FieldsSection() {
         opened={createOpen}
         onClose={() => setCreateOpen(false)}
         title={t('admin.settings.fields.modals.create')}
-        size="lg"
+        size="md"
         centered
       >
         <CreateListFieldLogicComponent
@@ -242,7 +242,7 @@ export function FieldsSection() {
         opened={updateOpen}
         onClose={() => setUpdateOpen(false)}
         title={t('admin.settings.fields.modals.update')}
-        size="lg"
+        size="md"
         centered
       >
         <UpdateListFieldLogicComponent

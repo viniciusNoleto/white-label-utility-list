@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IListRecord } from '../models/ListRecord';
 import type { PaginatedResponse, PayloadQuery } from '@/src/shared/types/api';
 import type { QueryFnCtx } from '@/src/shared/types/tanstack';

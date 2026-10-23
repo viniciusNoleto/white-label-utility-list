@@ -31,9 +31,12 @@ function fieldToYup(field: IListField, objects: IObject[], t: TFunction) {
       shape[objectField.key] = scalarFieldToYup({ ...objectField, required }, t);
     });
 
-    let objectSchema = yup.object(shape);
+    let objectSchema: yup.AnyObjectSchema = yup.object(shape);
 
     if (!field.required) {
+      // Objetos opcionais deixados em branco são salvos como `null` (ver normalizeListRecordValues)
+      objectSchema = objectSchema.nullable();
+
       const requiredObjectFields = objectFields.filter(f => f.required);
 
       if (requiredObjectFields.length > 0) {

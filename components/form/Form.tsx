@@ -8,6 +8,7 @@ export type FormProps = React.ComponentPropsWithoutRef<'form'> & {
 export function Form({ children, onSubmit, ...props }: FormProps) {
   return (
     <form
+      noValidate
       {...props}
       onSubmit={(e) => {
         e.preventDefault();

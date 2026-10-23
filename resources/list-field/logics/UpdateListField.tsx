@@ -92,11 +92,12 @@ export function UpdateListFieldLogicComponent({
       onSubmit={submit}
       className="flex flex-col gap-6"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+      <div className="form-grid">
         <FormTextInput
           label={t('admin.settings.fields.key.label')}
           value={(state as any).key}
           disabled
+          className="col-span-12"
         />
 
         <FormTextInput
@@ -104,6 +105,7 @@ export function UpdateListFieldLogicComponent({
           placeholder={t('admin.settings.fields.label.placeholder')}
           {...listFieldField('label')}
           required
+          className="col-span-12"
         />
 
         <FormSelect
@@ -112,11 +114,13 @@ export function UpdateListFieldLogicComponent({
           {...listFieldField('type')}
           clearable={false}
           required
+          className="col-span-12"
         />
 
         <FormSwitch
           label={t('admin.settings.fields.required.label')}
           {...listFieldField('required')}
+          className="col-span-12"
         />
 
         {(state as any).type === EListFieldType.SELECT ? (
@@ -128,7 +132,7 @@ export function UpdateListFieldLogicComponent({
             labelField="name"
             {...listFieldField('internal_list_id')}
             required
-            className="sm:col-span-2"
+            className="col-span-12"
           />
         ) : null}
 
@@ -141,7 +145,7 @@ export function UpdateListFieldLogicComponent({
             labelField="name"
             {...listFieldField('object_id')}
             required
-            className="sm:col-span-2"
+            className="col-span-12"
           />
         ) : null}
       </div>

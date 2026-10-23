@@ -4,6 +4,7 @@ MAKEFLAGS += --no-print-directory
 
 DOCKERFILE := docker-compose.${APP_ENV}.yml
 APP_NAME := white-label-utility-list-front
+SERVER_NAME := white-label-utility-list-server
 
 f :=
 art:
@@ -64,6 +65,19 @@ in-front:
 
 lint:
 	@make exec c="npm run lint"
+
+logs-server:
+	@docker logs $(SERVER_NAME)
+
+d :=
+certbot:
+	@docker compose -f $(DOCKERFILE) exec $(SERVER_NAME) certbot --nginx -d $(d)
+
+certbot-renew:
+	@docker compose -f $(DOCKERFILE) exec $(SERVER_NAME) certbot renew --nginx
+
+nginx-reload:
+	@docker compose -f $(DOCKERFILE) exec $(SERVER_NAME) nginx -s reload
 
 s :=
 t :=

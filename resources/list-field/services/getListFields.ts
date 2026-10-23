@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IListField } from '../models/ListField';
 import type { QueryFnCtx } from '@/src/shared/types/tanstack';
 

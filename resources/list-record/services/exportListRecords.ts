@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { GetListRecordsServiceFilter } from './getListRecords';
 
 export type ExportListRecordsServiceQuery = {
@@ -15,5 +15,5 @@ export function exportListRecordsService({ query }: { query?: ExportListRecordsS
 
   const qs = params.toString();
 
-  return appClient.getBlob(`/api/list-records/export${qs ? `?${qs}` : ''}`);
+  return appClient.blob(`/api/list-records/export${qs ? `?${qs}` : ''}`);
 }

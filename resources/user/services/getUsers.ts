@@ -1,4 +1,4 @@
-import { appClient } from '@/src/utils/app-client';
+import { appClient } from '@/src/utils/appClient';
 import type { IUser } from '../models/User';
 import type { QueryFnCtx } from '@/src/shared/types/tanstack';
 import type { PayloadQuery } from '@/src/shared/types/api';
